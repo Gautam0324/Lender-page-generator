@@ -360,7 +360,7 @@ export default function Apply() {
                 <div className="flex items-start mt-6">
                   <input type="checkbox" id="terms" className="mt-1 mr-3 w-4 h-4 text-[var(--color-secondary)] focus:ring-[var(--color-secondary)] border-gray-300 rounded" required />
                   <label htmlFor="terms" className="text-sm text-gray-600">
-                    I certify that the information provided is true and correct. I authorize LendFlow to verify my credit history and employment status. I agree to the <a href="#" className="text-[var(--color-secondary)] hover:underline">Terms of Service</a> and <a href="#" className="text-[var(--color-secondary)] hover:underline">Privacy Policy</a>.
+                    I certify that the information provided is true and correct. I authorize LendFlow to verify my credit history and employment status. I agree to the <a href="/terms-and-conditions" className="text-[var(--color-secondary)] hover:underline">Terms of Service</a> and <a href="/privacy-policy" className="text-[var(--color-secondary)] hover:underline">Privacy Policy</a>.
                   </label>
                 </div>
               </div>

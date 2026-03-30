@@ -12,6 +12,15 @@ export default function AdminSettings() {
     if (!data.adminPassword) {
       data.adminPassword = 'admin';
     }
+    if (typeof data.customHeaderText !== 'string') {
+      data.customHeaderText = INITIAL_DATA.settings.customHeaderText;
+    }
+    if (typeof data.customFooterText !== 'string') {
+      data.customFooterText = INITIAL_DATA.settings.customFooterText;
+    }
+    if (typeof data.metaTitle !== 'string' || !data.metaTitle.trim()) {
+      data.metaTitle = data.siteName || INITIAL_DATA.settings.siteName;
+    }
     setSettings(data);
   }, []);
 
@@ -35,6 +44,9 @@ export default function AdminSettings() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setStorageItem('settings', settings);
+    if (typeof document !== 'undefined') {
+      document.title = (settings.metaTitle || settings.siteName || 'LendFlow').trim();
+    }
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
   };
@@ -73,6 +85,19 @@ export default function AdminSettings() {
                 className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent outline-none"
               />
               <p className="text-sm text-gray-500 mt-1">This appears in the header and footer.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
+              <input
+                type="text"
+                name="metaTitle"
+                value={settings.metaTitle || ''}
+                onChange={handleChange}
+                className="w-full md:w-3/4 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent outline-none"
+                placeholder="Shown in browser tab and SEO title"
+              />
+              <p className="text-sm text-gray-500 mt-1">Used as the page title in browser tabs and downloaded export.</p>
             </div>
 
             <div>
@@ -126,6 +151,37 @@ export default function AdminSettings() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent outline-none"
                 />
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Custom Header & Footer */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900 font-heading">Custom Header & Footer</h2>
+          </div>
+          <div className="p-6 space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Custom Header Text</label>
+              <input
+                type="text"
+                name="customHeaderText"
+                value={settings.customHeaderText || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent outline-none"
+                placeholder="Text shown at the top of the website"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Custom Footer Text</label>
+              <input
+                type="text"
+                name="customFooterText"
+                value={settings.customFooterText || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent outline-none"
+                placeholder="Text shown in the footer of the website"
+              />
             </div>
           </div>
         </div>

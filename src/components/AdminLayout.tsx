@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Users, Settings, LogOut, Edit, Menu, X, Bell, Search } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Settings, LogOut, Edit, Menu, X, Bell, Search, Building2 } from 'lucide-react';
 import { getStorageItem, removeStorageItem, INITIAL_DATA } from '../store/localStorage';
 
 export const AdminSidebar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (v: boolean) => void }) => {
@@ -9,6 +9,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen
 
   const handleLogout = () => {
     removeStorageItem('admin_logged_in');
+    removeStorageItem('admin_session');
     navigate('/admin/login');
   };
 
@@ -16,6 +17,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen
     { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
     { name: 'Applications', path: '/admin/applications', icon: <FileText size={20} /> },
     { name: 'Users', path: '/admin/users', icon: <Users size={20} /> },
+    { name: 'Lenders', path: '/admin/lenders', icon: <Building2 size={20} /> },
     { name: 'CMS / Content', path: '/admin/cms', icon: <Edit size={20} /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
   ];
@@ -71,6 +73,9 @@ export const AdminSidebar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen
 
 export const AdminTopbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const settings = getStorageItem('settings', INITIAL_DATA.settings);
+  const session = getStorageItem('admin_session', null);
+  const adminName = session?.name || 'Admin User';
+  const adminInitial = String(adminName || 'A').charAt(0).toUpperCase();
 
   return (
     <header className="bg-white shadow-sm h-20 flex items-center justify-between px-6 lg:px-10 z-10 sticky top-0">
@@ -99,10 +104,10 @@ export const AdminTopbar = ({ toggleSidebar }: { toggleSidebar: () => void }) =>
         </button>
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white font-bold mr-3">
-            A
+            {adminInitial}
           </div>
           <div className="hidden md:block">
-            <span className="block text-sm font-semibold text-gray-800">Admin User</span>
+            <span className="block text-sm font-semibold text-gray-800">{adminName}</span>
             <span className="block text-xs text-gray-500">Administrator</span>
           </div>
         </div>
