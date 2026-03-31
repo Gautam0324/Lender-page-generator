@@ -11,22 +11,22 @@ import { initializeData, getStorageItem } from './store/localStorage';
 import { ThemeProvider } from './store/ThemeContext';
 
 // Public Pages
-import Home from './pages/Home';
-import LoanDetails from './pages/LoanDetails';
-import Apply from './pages/Apply';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsAndConditions from './pages/TermsAndConditions';
+import Home from './views/Home';
+import LoanDetails from './views/LoanDetails';
+import Apply from './views/Apply';
+import About from './views/About';
+import Contact from './views/Contact';
+import PrivacyPolicy from './views/PrivacyPolicy';
+import TermsAndConditions from './views/TermsAndConditions';
 
 // Admin Pages
-import AdminLogin from './pages/admin/Login';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminApplications from './pages/admin/Applications';
-import AdminUsers from './pages/admin/Users';
-import AdminLenders from './pages/admin/Lenders';
-import AdminCMS from './pages/admin/CMS';
-import AdminSettings from './pages/admin/Settings';
+import AdminLogin from './views/admin/Login';
+import AdminDashboard from './views/admin/Dashboard';
+import AdminApplications from './views/admin/Applications';
+import AdminUsers from './views/admin/Users';
+import AdminLenders from './views/admin/Lenders';
+import AdminCMS from './views/admin/CMS';
+import AdminSettings from './views/admin/Settings';
 
 export default function App() {
   useEffect(() => {
