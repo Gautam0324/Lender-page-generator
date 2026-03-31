@@ -127,6 +127,8 @@ export const Footer = () => {
               <li><Link to="/about" className="text-gray-400 hover:text-[var(--color-secondary)] transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="text-gray-400 hover:text-[var(--color-secondary)] transition-colors">Contact</Link></li>
               <li><Link to="/apply" className="text-gray-400 hover:text-[var(--color-secondary)] transition-colors">Apply Now</Link></li>
+              <li><Link to="/privacy-policy" className="text-gray-400 hover:text-[var(--color-secondary)] transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions" className="text-gray-400 hover:text-[var(--color-secondary)] transition-colors">Terms & Conditions</Link></li>
               <li><Link to="/admin/login" className="text-gray-400 hover:text-[var(--color-secondary)] transition-colors">Admin Login</Link></li>
             </ul>
           </div>
