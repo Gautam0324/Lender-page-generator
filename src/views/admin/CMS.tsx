@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Save, CheckCircle, Trash2, Plus, Download, ExternalLink, RefreshCw, X, GripVertical, Image as ImageIcon, Upload, ChevronDown, ChevronUp, Layout, Video } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Save, CheckCircle, Trash2, Plus, Download, ExternalLink, RefreshCw, X, GripVertical, Image as ImageIcon, Upload, ChevronDown, ChevronUp, Layout, Video, Monitor, Smartphone } from 'lucide-react';
 import { getStorageItem, setStorageItem, INITIAL_DATA } from '../../store/localStorage';
 import Editor from '../../components/tiptap/Editor';
 import { CMS_TEMPLATES, FONT_FAMILIES, getAllFontCategories } from '../../store/cmsTemplates';
@@ -985,6 +985,16 @@ const BlockEditor = ({ block, updateData }: { block: any, updateData: (data: any
 
 // --- Main CMS Component ---
 
+type PreviewDevice = 'desktop' | 'iphone17ProMax';
+
+const IPHONE_17_PRO_MAX_VIEWPORT = {
+  width: 440,
+  height: 956
+};
+
+const PHONE_FRAME_PADDING = 12;
+const DYNAMIC_ISLAND_TOP_OFFSET = PHONE_FRAME_PADDING + 4;
+
 export default function AdminCMS() {
   const [cms, setCms] = useState<any>(null);
   const [legalPages, setLegalPages] = useState<any>(INITIAL_DATA.legalPages);
@@ -992,6 +1002,9 @@ export default function AdminCMS() {
   const [isSaved, setIsSaved] = useState(false);
   const [previewKey, setPreviewKey] = useState(Date.now());
   const [isDownloading, setIsDownloading] = useState(false);
+  const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop');
+  const [mobilePreviewScale, setMobilePreviewScale] = useState(1);
+  const previewContainerRef = useRef<HTMLDivElement | null>(null);
   
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -1054,6 +1067,34 @@ export default function AdminCMS() {
     document.body.style.fontFamily = savedFont;
     document.documentElement.style.setProperty('--font-sans', savedFont);
   }, []);
+
+  useEffect(() => {
+    if (previewDevice !== 'iphone17ProMax') return;
+    const container = previewContainerRef.current;
+    if (!container) return;
+
+    const frameWidth = IPHONE_17_PRO_MAX_VIEWPORT.width + (PHONE_FRAME_PADDING * 2);
+    const frameHeight = IPHONE_17_PRO_MAX_VIEWPORT.height + (PHONE_FRAME_PADDING * 2);
+
+    const updateScale = () => {
+      const availableWidth = Math.max(container.clientWidth - 32, 0);
+      const availableHeight = Math.max(container.clientHeight - 32, 0);
+      if (!availableWidth || !availableHeight) return;
+      const nextScale = Math.min(availableWidth / frameWidth, availableHeight / frameHeight, 1);
+      setMobilePreviewScale(nextScale > 0 ? nextScale : 0.1);
+    };
+
+    updateScale();
+
+    const resizeObserver = new ResizeObserver(updateScale);
+    resizeObserver.observe(container);
+    window.addEventListener('resize', updateScale);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateScale);
+    };
+  }, [previewDevice]);
 
   const handleDownload = async () => {
     try {
@@ -2619,13 +2660,90 @@ ${sections}
           </div>
         </div>
         <div className="p-6">
-          <div className="border border-gray-200 rounded-lg overflow-hidden h-[600px] mb-6 relative bg-gray-50 shadow-inner">
-            <iframe 
-              key={previewKey} 
-              src={selectedPagePreviewPath} 
-              className="w-full h-full border-0"
-              title="Live Preview"
-            />
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white p-1">
+              <button
+                onClick={() => setPreviewDevice('desktop')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  previewDevice === 'desktop'
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Monitor size={15} />
+                Desktop
+              </button>
+              <button
+                onClick={() => setPreviewDevice('iphone17ProMax')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  previewDevice === 'iphone17ProMax'
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Smartphone size={15} />
+                iPhone 17 Pro Max
+              </button>
+            </div>
+            {previewDevice === 'iphone17ProMax' && (
+              <p className="text-xs text-gray-500 font-medium">
+                Mobile viewport: {IPHONE_17_PRO_MAX_VIEWPORT.width} x {IPHONE_17_PRO_MAX_VIEWPORT.height}
+              </p>
+            )}
+          </div>
+
+          <div
+            ref={previewContainerRef}
+            className={`border border-gray-200 rounded-lg overflow-hidden mb-6 relative bg-gray-50 shadow-inner ${
+              previewDevice === 'desktop' ? 'h-[600px]' : 'h-[780px]'
+            }`}
+          >
+            {previewDevice === 'desktop' ? (
+              <iframe
+                key={`${previewKey}-desktop`}
+                src={selectedPagePreviewPath}
+                className="w-full h-full border-0"
+                title="Live Preview"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center p-4 overflow-hidden">
+                <div
+                  className="relative"
+                  style={{
+                    width: `${(IPHONE_17_PRO_MAX_VIEWPORT.width + (PHONE_FRAME_PADDING * 2)) * mobilePreviewScale}px`,
+                    height: `${(IPHONE_17_PRO_MAX_VIEWPORT.height + (PHONE_FRAME_PADDING * 2)) * mobilePreviewScale}px`
+                  }}
+                >
+                  <div
+                    className="relative"
+                    style={{
+                      width: `${IPHONE_17_PRO_MAX_VIEWPORT.width + (PHONE_FRAME_PADDING * 2)}px`,
+                      height: `${IPHONE_17_PRO_MAX_VIEWPORT.height + (PHONE_FRAME_PADDING * 2)}px`,
+                      transform: `scale(${mobilePreviewScale})`,
+                      transformOrigin: 'top left'
+                    }}
+                  >
+                    <div className="absolute inset-0 rounded-[44px] bg-slate-900 shadow-2xl" />
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 h-7 w-36 rounded-full bg-slate-800 z-20"
+                      style={{ top: `${DYNAMIC_ISLAND_TOP_OFFSET}px` }}
+                    />
+                    <iframe
+                      key={`${previewKey}-iphone17ProMax`}
+                      src={selectedPagePreviewPath}
+                      title="Live Preview - iPhone 17 Pro Max"
+                      className="absolute z-10 rounded-[32px] border-0 bg-white"
+                      style={{
+                        top: `${PHONE_FRAME_PADDING}px`,
+                        left: `${PHONE_FRAME_PADDING}px`,
+                        width: `${IPHONE_17_PRO_MAX_VIEWPORT.width}px`,
+                        height: `${IPHONE_17_PRO_MAX_VIEWPORT.height}px`
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div className="flex justify-end">
             <button 

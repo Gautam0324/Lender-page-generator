@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin_users {
+  id            BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  full_name     String    @db.VarChar(120)
+  username      String    @unique(map: "username") @db.VarChar(60)
+  email         String    @unique(map: "email") @db.VarChar(190)
+  password_hash String    @db.VarChar(255)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @db.Timestamp(0)
+  lenders       lenders[]
+}
+
+model lenders {
+  id            BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  admin_user_id BigInt         @db.UnsignedBigInt
+  lender_name   String         @db.VarChar(150)
+  website       String?        @default("") @db.VarChar(255)
+  contact_email String?        @default("") @db.VarChar(190)
+  contact_phone String?        @default("") @db.VarChar(40)
+  status        lenders_status @default(active)
+  notes         String?        @db.Text
+  created_at    DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?      @default(now()) @db.Timestamp(0)
+  admin_users   admin_users    @relation(fields: [admin_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_lenders_admin_user")
+
+  @@index([admin_user_id], map: "fk_lenders_admin_user")
+}
+
+model Page {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GlobalSettings {
+  id             String @id @default("global")
+  primaryColor   String @default("#3b82f6")
+  secondaryColor String @default("#1e293b")
+  fontFamily     String @default("Inter")
+  containerWidth String @default("1200px")
+}
+
+enum lenders_status {
+  active
+  inactive
+}
