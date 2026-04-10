@@ -1,6 +1,7 @@
 import React from 'react';
 import { getStorageItem, INITIAL_DATA } from '../store/localStorage';
 import { applyDomainPlaceholder, getDomainFromMetaTitle } from '../store/legalContent';
+import { sanitizeHtml } from '../lib/sanitization';
 
 type LegalPageType = 'privacyPolicy' | 'termsAndConditions';
 
