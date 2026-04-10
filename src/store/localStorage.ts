@@ -7,7 +7,14 @@ export const INITIAL_DATA = {
     contactAddress: '123 Financial District, NY 10004',
     adminPassword: 'admin',
     customHeaderText: 'Get fast approvals with transparent rates — apply in minutes.',
-    customFooterText: 'Need help? Contact our support team 24/7 for assistance.'
+    customFooterText: 'Need help? Contact our support team 24/7 for assistance.',
+    headerScripts: '',
+    bodyScripts: '',
+    ads: {
+      belowHero: { enabled: false, type: 'html', code: '', imageUrl: '', linkUrl: '' },
+      sidebar: { enabled: false, type: 'html', code: '', imageUrl: '', linkUrl: '' },
+      aboveFooter: { enabled: false, type: 'html', code: '', imageUrl: '', linkUrl: '' }
+    }
   },
   applications: [],
   users: [

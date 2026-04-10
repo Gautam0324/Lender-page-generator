@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Clock, DollarSign, ChevronDown, ChevronUp, Star } from 'lucide-react';
 import { getStorageItem, INITIAL_DATA } from '../store/localStorage';
+import { AdSlot } from '../components/AdSlot';
 
 // --- Section Components ---
 
@@ -641,23 +642,33 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {blocks.map((block: any, index: number) => {
-        switch (block.type) {
-          case 'customHeader': return <CustomHeaderSection key={block.id} data={block.data} />;
-          case 'announcement': return <AnnouncementBarSection key={block.id} data={block.data} />;
-          case 'saleCountdown': return <SaleCountdownSection key={block.id} data={block.data} />;
-          case 'hero': return <HeroSection key={block.id} data={block.data} />;
-          case 'rawHtml': return <RawHtmlSection key={block.id} data={block.data} />;
-          case 'custom': return <CustomSection key={block.id} data={block.data} index={index} />;
-          case 'paragraph': return <ParagraphSection key={block.id} data={block.data} />;
-          case 'list': return <ListSection key={block.id} data={block.data} />;
-          case 'howItWorks': return <HowItWorksSection key={block.id} data={block.data} />;
-          case 'testimonials': return <TestimonialsSection key={block.id} data={block.data} />;
-          case 'faq': return <FaqSection key={block.id} data={block.data} />;
-          case 'cta': return <CtaSection key={block.id} data={block.data} />;
-          case 'customFooter': return <CustomFooterSection key={block.id} data={block.data} />;
-          default: return null;
-        }
+        const renderBlock = () => {
+          switch (block.type) {
+            case 'customHeader': return <CustomHeaderSection key={block.id} data={block.data} />;
+            case 'announcement': return <AnnouncementBarSection key={block.id} data={block.data} />;
+            case 'saleCountdown': return <SaleCountdownSection key={block.id} data={block.data} />;
+            case 'hero': return <HeroSection key={block.id} data={block.data} />;
+            case 'rawHtml': return <RawHtmlSection key={block.id} data={block.data} />;
+            case 'custom': return <CustomSection key={block.id} data={block.data} index={index} />;
+            case 'paragraph': return <ParagraphSection key={block.id} data={block.data} />;
+            case 'list': return <ListSection key={block.id} data={block.data} />;
+            case 'howItWorks': return <HowItWorksSection key={block.id} data={block.data} />;
+            case 'testimonials': return <TestimonialsSection key={block.id} data={block.data} />;
+            case 'faq': return <FaqSection key={block.id} data={block.data} />;
+            case 'cta': return <CtaSection key={block.id} data={block.data} />;
+            case 'customFooter': return <CustomFooterSection key={block.id} data={block.data} />;
+            default: return null;
+          }
+        };
+
+        return (
+          <React.Fragment key={block.id}>
+            {renderBlock()}
+            {block.type === 'hero' && <AdSlot slotId="belowHero" className="max-w-7xl mx-auto px-4" />}
+          </React.Fragment>
+        );
       })}
+      <AdSlot slotId="aboveFooter" className="max-w-7xl mx-auto px-4" />
     </div>
   );
 }

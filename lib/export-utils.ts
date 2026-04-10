@@ -110,6 +110,26 @@ function applyAnimationToSectionHtml(sectionHtml: string, data: any): string {
   });
 }
 
+function renderAdSlotHtml(slotId: string, settings: any): string {
+  const adConfig = settings?.ads?.[slotId];
+  if (!adConfig || !adConfig.enabled) return '';
+
+  const className = "ad-slot-container flex justify-center my-8 max-w-7xl mx-auto px-4";
+  
+  if (adConfig.type === 'html') {
+    return `<!-- AD SLOT: ${slotId} --><div class="${className}" id="ad-slot-${slotId}">${adConfig.code || ''}</div>`;
+  } else {
+    return `
+      <!-- AD SLOT: ${slotId} -->
+      <div class="${className}" id="ad-slot-${slotId}">
+        <a href="${escapeHtml(adConfig.linkUrl || '#')}" target="_blank" rel="noopener noreferrer" class="block hover:opacity-90 transition-opacity">
+          <img src="${escapeHtml(adConfig.imageUrl || '')}" alt="Advertisement" class="max-w-full h-auto rounded-lg shadow-sm">
+        </a>
+      </div>
+    `;
+  }
+}
+
 export function generateStaticHtml(cmsData: any, settings: any) {
   const blocks = cmsData.blocks || [];
   const siteName = settings?.siteName || 'LendFlow';
@@ -412,7 +432,15 @@ export function generateStaticHtml(cmsData: any, settings: any) {
     }
 
     sectionsHtml += blockHtml;
+
+    // Inject belowHero ad after hero block
+    if (type === 'hero') {
+      sectionsHtml += renderAdSlotHtml('belowHero', settings);
+    }
   });
+
+  // Inject aboveFooter ad before the end
+  sectionsHtml += renderAdSlotHtml('aboveFooter', settings);
 
   // Ensure a footer is always present for legal links if no custom footer block was added
   const hasFooter = blocks.some((b: any) => b.type === 'customFooter');
@@ -440,6 +468,7 @@ export function generateStaticHtml(cmsData: any, settings: any) {
   <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    ${settings?.headerScripts || ''}
 </head>
 <body class="font-sans antialiased text-gray-900 bg-slate-50">
     <div class="flex flex-col min-h-screen">
@@ -550,6 +579,7 @@ export function generateStaticHtml(cmsData: any, settings: any) {
         setInterval(updateCountdowns, 1000);
       })();
     </script>
+    ${settings?.bodyScripts || ''}
 </body>
 </html>
   `.trim();
@@ -577,6 +607,7 @@ export function generateLegalPageHtml(pageData: any, settings: any, fileTitle: s
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  ${settings?.headerScripts || ''}
 </head>
 <body class="font-sans antialiased text-gray-900 bg-slate-50">
   <main class="py-12">
@@ -593,6 +624,7 @@ export function generateLegalPageHtml(pageData: any, settings: any, fileTitle: s
       </div>
     </div>
   </main>
+  ${settings?.bodyScripts || ''}
 </body>
 </html>
   `.trim();

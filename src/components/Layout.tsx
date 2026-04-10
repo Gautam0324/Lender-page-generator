@@ -175,6 +175,56 @@ export const Footer = () => {
 };
 
 export const Layout = () => {
+  const settings = getStorageItem('settings', INITIAL_DATA.settings);
+
+  React.useEffect(() => {
+    // Helper to inject scripts from HTML string
+    const injectScripts = (html: string, target: HTMLElement, idPrefix: string) => {
+      // Clean up previous injections by this prefix
+      const existing = target.querySelectorAll(`[data-injected-by="${idPrefix}"]`);
+      existing.forEach(el => el.remove());
+
+      if (!html) return;
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      
+      // Handle <script> tags specially so they execute
+      const scripts = doc.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        Array.from(oldScript.attributes).forEach(attr => {
+          newScript.setAttribute(attr.name, attr.value);
+        });
+        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+        newScript.setAttribute('data-injected-by', idPrefix);
+        target.appendChild(newScript);
+      });
+
+      // Handle other tags (link, style, meta, etc.)
+      const otherTags = Array.from(doc.head.childNodes).filter(node => node.nodeName !== 'SCRIPT');
+      otherTags.forEach(node => {
+        if (node instanceof HTMLElement) {
+          const clone = node.cloneNode(true) as HTMLElement;
+          clone.setAttribute('data-injected-by', idPrefix);
+          target.appendChild(clone);
+        }
+      });
+      
+      const otherBodyTags = Array.from(doc.body.childNodes).filter(node => node.nodeName !== 'SCRIPT');
+      otherBodyTags.forEach(node => {
+        if (node instanceof HTMLElement) {
+          const clone = node.cloneNode(true) as HTMLElement;
+          clone.setAttribute('data-injected-by', idPrefix);
+          target.appendChild(clone);
+        }
+      });
+    };
+
+    injectScripts(settings.headerScripts || '', document.head, 'cms-header');
+    injectScripts(settings.bodyScripts || '', document.body, 'cms-body');
+  }, [settings.headerScripts, settings.bodyScripts]);
+
   return (
     <div className="min-h-screen flex flex-col font-sans">
       <Navbar />

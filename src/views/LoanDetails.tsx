@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CreditCard, Briefcase, Home as HomeIcon, Car, CheckCircle, Calculator } from 'lucide-react';
+import { AdSlot } from '../components/AdSlot';
 
 const loanData = {
   personal: {
@@ -270,6 +271,8 @@ export default function LoanDetails() {
                 </Link>
               </div>
             </div>
+            
+            <AdSlot slotId="sidebar" className="mt-8" />
           </div>
 
         </div>
