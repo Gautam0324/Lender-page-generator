@@ -13,7 +13,7 @@ export default function LegalPage({ pageType }: LegalPageProps) {
   const settings = getStorageItem('settings', INITIAL_DATA.settings);
   const pageData = legalPages?.[pageType] || INITIAL_DATA.legalPages[pageType];
   const domainName = getDomainFromMetaTitle(settings?.metaTitle, settings?.siteName);
-  const renderedContent = applyDomainPlaceholder(pageData?.content || '', domainName);
+  const renderedContent = sanitizeHtml(applyDomainPlaceholder(pageData?.content || '', domainName));
 
   return (
     <div className="bg-gray-50 min-h-screen py-12">

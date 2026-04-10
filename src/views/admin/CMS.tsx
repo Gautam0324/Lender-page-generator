@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Save, CheckCircle, Trash2, Plus, Download, ExternalLink, RefreshCw, X, GripVertical, Image as ImageIcon, Upload, ChevronDown, ChevronUp, Layout, Video, Monitor, Smartphone } from 'lucide-react';
 import { getStorageItem, setStorageItem, INITIAL_DATA } from '../../store/localStorage';
+import { sanitizeHtml } from '../../lib/sanitization';
 import Editor from '../../components/tiptap/Editor';
 import { CMS_TEMPLATES, FONT_FAMILIES, getAllFontCategories } from '../../store/cmsTemplates';
 
@@ -1872,7 +1873,7 @@ ${sections}
                         <div key={idx} className="mb-6 p-4 bg-white rounded-lg border border-gray-200">
                           <div
                             className="prose max-w-none"
-                            dangerouslySetInnerHTML={{ __html: block.data?.html || '' }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.data?.html || '') }}
                           />
                         </div>
                       );

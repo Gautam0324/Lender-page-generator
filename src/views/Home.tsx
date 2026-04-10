@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Clock, DollarSign, ChevronDown, ChevronUp, Star } from 'lucide-react';
 import { getStorageItem, INITIAL_DATA } from '../store/localStorage';
 import { AdSlot } from '../components/AdSlot';
+import { sanitizeHtml } from '../lib/sanitization';
 
 // --- Section Components ---
 
@@ -154,7 +155,7 @@ const CustomSection: React.FC<{ data: any, index: number }> = ({ data, index }) 
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] font-heading mb-6">{data.heading}</h2>
           <div 
             className="text-lg text-gray-600 leading-relaxed mb-8 prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: data.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.content) }}
           />
           <div className={`flex flex-col sm:flex-row ${justifyClass} gap-4`}>
             {data.buttonText && (
@@ -371,7 +372,7 @@ const ParagraphSection: React.FC<{ data: any }> = ({ data }) => (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div 
         className="text-lg text-gray-700 leading-relaxed prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: data.content }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.content) }}
       />
     </div>
   </section>
@@ -398,7 +399,7 @@ const RawHtmlSection: React.FC<{ data: any }> = ({ data }) => (
   <section className="py-0 bg-white" style={getSectionRadiusStyle(data)}>
     <div
       className="custom-html-block"
-      dangerouslySetInnerHTML={{ __html: data?.html || '' }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(data?.html || '') }}
     />
   </section>
 );
